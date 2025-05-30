@@ -27,7 +27,7 @@ A Python tool to analyze your chess games for blunders using the Stockfish engin
    Run download-chess-games.py to fetch your Lichess games. Make sure to use the correct username
 
 2. Analyze blunders:
-   Run analyze_blunders.py to process your downloaded games with Stockfish and generate blunder data.
+   Run analyze_blunders.py to process your downloaded games with Stockfish and generate blunder data. Make sure to use the correct username.
 
 3. Visualize heatmap:
    Run draw_heatmap.py to display the blunder frequency heatmap.

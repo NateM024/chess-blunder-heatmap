@@ -18,12 +18,12 @@ def create_heatmap_matrix(blunder_data):
     for square, count in blunder_data.items():
         file = chess.FILE_NAMES.index(square[0])
         rank = int(square[1]) - 1
-        matrix[7 - rank][file] = count  # Flip vertically to match board layout
+        matrix[rank][file] = count  # Flip vertically to match board layout
 
     return matrix
 
 def draw_chessboard_heatmap(heatmap_matrix, title="Blunder Heatmap"):
-    fig, ax = plt.subplots(figsize=(7.5, 7.5))
+    fig, ax = plt.subplots(figsize=(8, 8))
     cmap = plt.cm.Reds
 
     cax = ax.imshow(heatmap_matrix, cmap=cmap, interpolation="nearest")
@@ -38,16 +38,11 @@ def draw_chessboard_heatmap(heatmap_matrix, title="Blunder Heatmap"):
     ax.set_xticklabels("abcdefgh")
 
     # Set ticks for ranks (rows) but remove the bottom label
-    y_labels = list(reversed(range(1, 9)))
+    y_labels = list(range(1, 9))
     ax.set_yticks(np.arange(BOARD_SIZE))
     ax.set_yticklabels(y_labels)
 
-    # Remove the bottom y-tick label
-    ax.tick_params(axis='y', which='both', length=0)
-    labels = ax.get_yticklabels()
-    labels[-1] = plt.matplotlib.text.Text(0, 0, '')  # blank last label
-    ax.set_yticklabels(labels)
-
+    # Set titles for heatmap
     ax.set_title(title)
     ax.set_xlabel("File")
     ax.set_ylabel("Rank")

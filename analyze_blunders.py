@@ -4,23 +4,32 @@ import json
 from collections import Counter
 
 STOCKFISH_PATH = "C:/Tools/stockfish-windows-x86-64-avx2.exe"
-BLUNDER_THRESHOLD = 1.5  # Eval drop in pawns considered a blunder
+USERNAME = "NateChess24" #<-- Change as needed
+BLUNDER_THRESHOLD = 2  # Eval drop in pawns considered a blunder
 
 def analyze_blunders_with_stockfish(pgn_file="games.pgn", max_depth=15):
     blunder_squares = Counter()
 
     with open(pgn_file) as f:
         print('opened pgn')
+        count_games = 1
         while True:
             game = chess.pgn.read_game(f)
             if game is None:
                 break
-
+        
             board = game.board()
+
             evaluations = []
 
             with chess.engine.SimpleEngine.popen_uci(STOCKFISH_PATH) as engine:
                 node = game
+                if chess.pgn.read_headers(f).get("Black") == USERNAME:
+                    next_node = node.variation(0)
+                    move = next_node.move
+                    board.push(move)
+                    node = next_node
+
                 while node.variations:
                     next_node = node.variation(0)
                     move = next_node.move
@@ -32,6 +41,16 @@ def analyze_blunders_with_stockfish(pgn_file="games.pgn", max_depth=15):
 
                     board.push(move)
                     node = next_node
+
+                    #Skip the opponent's move
+                    if node.variations is True:
+                        next_node = node.variation(0)
+                        move = next_node.move
+                        board.push(move)
+                        node = next_node
+
+                print(f"Game {count_games} analyzed")
+                count_games += 1
 
                 # Compare evals to find blunders
                 for i in range(1, len(evaluations)):
@@ -51,3 +70,5 @@ def analyze_blunders_with_stockfish(pgn_file="games.pgn", max_depth=15):
 
 if __name__ == "__main__":
     analyze_blunders_with_stockfish()
+
+
