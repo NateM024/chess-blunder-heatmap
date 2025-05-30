@@ -8,7 +8,7 @@ A Python tool to analyze your chess games for blunders using the Stockfish engin
 
 - **Downloads your games** from Lichess via the API (PGN format).  
 - **Analyze blunders automatically** using Stockfish (local engine).  
-- Generate a **heatmap visualization** showing which squares have the highest blunder frequency.  
+- **Generate a heatmap visualization** showing which squares have the highest blunder frequency.  
 - Simple, clean GUI output with adjustable figure size and a bottom-positioned colorbar.  
 
 ---
@@ -24,7 +24,7 @@ A Python tool to analyze your chess games for blunders using the Stockfish engin
 
 ### Set Up
 1. Download your games:
-   Run download-chess-games.py to fetch your Lichess games.
+   Run download-chess-games.py to fetch your Lichess games. Make sure to use the correct username
 
 2. Analyze blunders:
    Run analyze_blunders.py to process your downloaded games with Stockfish and generate blunder data.
@@ -50,3 +50,7 @@ A Python tool to analyze your chess games for blunders using the Stockfish engin
 - Filter blunders by piece type or game phase.
 
 - Export heatmap images.
+
+- Include heatmaps for mistakes, best moves, etc.
+
+- Overall GUI improvements
