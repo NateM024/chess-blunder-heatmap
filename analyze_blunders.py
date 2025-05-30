@@ -3,70 +3,72 @@ import chess.engine
 import json
 from collections import Counter
 
-STOCKFISH_PATH = "C:/Tools/stockfish-windows-x86-64-avx2.exe"
-USERNAME = "NateChess24" #<-- Change as needed
+STOCKFISH_PATH = "C:/Tools/stockfish-windows-x86-64-avx2.exe" # <-- Change as needed
+USERNAME = "NateChess24" # <-- Change as needed
 BLUNDER_THRESHOLD = 2  # Eval drop in pawns considered a blunder
 
 def analyze_blunders_with_stockfish(pgn_file="games.pgn", max_depth=15):
-    blunder_squares = Counter()
+    from_square_blunders = Counter()
+    to_square_blunders = Counter()
 
     with open(pgn_file) as f:
-        print('opened pgn')
         count_games = 1
         while True:
             game = chess.pgn.read_game(f)
             if game is None:
                 break
         
-            board = game.board()
+            # Figure out what color the user played as
+            player_color = chess.WHITE
+            if game.headers.get("BLACK", "") == USERNAME:
+                player_color = chess.BLACK
 
+            board = game.board()
             evaluations = []
 
             with chess.engine.SimpleEngine.popen_uci(STOCKFISH_PATH) as engine:
                 node = game
-                if chess.pgn.read_headers(f).get("Black") == USERNAME:
-                    next_node = node.variation(0)
-                    move = next_node.move
-                    board.push(move)
-                    node = next_node
 
+                # Go through each move
                 while node.variations:
                     next_node = node.variation(0)
                     move = next_node.move
 
-                    # Evaluate current position
-                    info = engine.analyse(board, chess.engine.Limit(depth=max_depth))
-                    score = info["score"].white().score(mate_score=10000)
-                    evaluations.append(score if score is not None else 0)
+                    # Only evaluate player's moves
+                    if board.turn == player_color:
+                        info = engine.analyse(board, chess.engine.Limit(depth=max_depth))
+                        score = info["score"].white().score(mate_score=10000)
+                        evaluations.append(score if score is not None else 0)
 
                     board.push(move)
                     node = next_node
-
-                    #Skip the opponent's move
-                    if node.variations is True:
-                        next_node = node.variation(0)
-                        move = next_node.move
-                        board.push(move)
-                        node = next_node
-
-                print(f"Game {count_games} analyzed")
-                count_games += 1
 
                 # Compare evals to find blunders
                 for i in range(1, len(evaluations)):
                     delta = evaluations[i] - evaluations[i - 1]
                     if delta < -BLUNDER_THRESHOLD * 100:  # Stockfish scores in centipawns
                         move = list(game.mainline_moves())[i - 1]
-                        blunder_squares[move.from_square] += 1
-                        blunder_squares[move.to_square] += 1
+                        from_square_blunders[move.from_square] += 1
+                        to_square_blunders[move.to_square] += 1
 
-    # Convert square indices to algebraic notation
-    result = {chess.square_name(sq): count for sq, count in blunder_squares.items()}
+                print(f"Game {count_games} analyzed")
+                count_games += 1
 
-    with open("blunder_heatmap_data.json", "w") as f:
-        json.dump(result, f, indent=2)
+    # Convert to algebraic notation
+    from_result = {chess.square_name(sq): count for sq, count in from_square_blunders.items()}
+    to_result = {chess.square_name(sq): count for sq, count in to_square_blunders.items()}
 
-    print("✅ Analysis complete. Saved to blunder_heatmap_data.json.")
+    heatmap_data = {
+        "from_squares": from_result,
+        "to_squares": to_result
+    }
+
+    # Save to json file
+    with open("blunder_heatmap_data.json", "w") as out_file:
+        json.dump(heatmap_data, out_file, indent=2)
+
+
+    print("Analysis complete. Saved to blunder_heatmap_data.json.")
 
 if __name__ == "__main__":
     analyze_blunders_with_stockfish()

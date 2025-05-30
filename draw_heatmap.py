@@ -8,9 +8,26 @@ import chess
 BOARD_SIZE = 8
 SQUARES = [chess.square_name(sq) for sq in chess.SQUARES]
 
-def load_blunder_data(json_file="blunder_heatmap_data.json"):
+def load_blunder_data(json_file="blunder_heatmap_data.json", heatmap_type="from"):
     with open(json_file, "r") as f:
-        return json.load(f)
+        data = json.load(f)
+    
+    if heatmap_type == "from":
+        return data.get("from_squares", "{}")
+    elif heatmap_type == "to":
+        return data.get("to_squares", "{}")
+    elif heatmap_type == "both":
+        from_blunders = data.get("from_squares", {})
+        to_blunders = data.get("to_squares", {})
+        combined = {}
+
+        # Sum counts for squares appearing in either dict
+        all_squares = set(from_blunders) | set(to_blunders)
+        for sq in all_squares:
+            combined[sq] = from_blunders.get(sq, 0) + to_blunders.get(sq, 0)
+        return combined
+    else:
+        return ValueError("Heatmap must be 'from' or 'to'")
 
 def create_heatmap_matrix(blunder_data):
     matrix = np.zeros((BOARD_SIZE, BOARD_SIZE))
@@ -57,6 +74,6 @@ def draw_chessboard_heatmap(heatmap_matrix, title="Blunder Heatmap"):
     plt.show()
 
 if __name__ == "__main__":
-    data = load_blunder_data()
+    data = load_blunder_data("blunder_heatmap_data.json", heatmap_type="both")
     matrix = create_heatmap_matrix(data)
     draw_chessboard_heatmap(matrix)
