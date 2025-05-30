@@ -12,4 +12,4 @@ def download_lichess_games(username, max_games=20, output_file="games.pgn"):
 
 # Example usage
 if __name__ == "__main__":
-    download_lichess_games("your_username_here", max_games=50)
+    download_lichess_games("NateChess24", max_games=10)
