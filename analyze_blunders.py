@@ -3,13 +3,14 @@ import chess.engine
 import json
 from collections import Counter
 
-STOCKFISH_PATH = "C:/Users/nmars/OneDrive/Desktop/stockfish_folder/stockfish/stockfish-windows-x86-64-avx2.exe"  # <-- CHANGE THIS TO MATCH YOUR SYSTEM
+STOCKFISH_PATH = "C:/Tools/stockfish-windows-x86-64-avx2.exe"
 BLUNDER_THRESHOLD = 1.5  # Eval drop in pawns considered a blunder
 
 def analyze_blunders_with_stockfish(pgn_file="games.pgn", max_depth=15):
     blunder_squares = Counter()
 
     with open(pgn_file) as f:
+        print('opened pgn')
         while True:
             game = chess.pgn.read_game(f)
             if game is None:

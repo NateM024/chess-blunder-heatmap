@@ -1,55 +1,49 @@
 # ♟️ Lichess Blunder Heatmap Visualizer
 
-Visualize your chess blunders with interactive heatmaps based on your actual games from Lichess!
+A Python tool to analyze your chess games for blunders using the Stockfish engine and visualize blunder frequencies on a chessboard heatmap.
 
 ---
 
-## 🔍 Project Overview
+## Features
 
-This project provides a set of Python scripts to:
-
-1. **Download your public chess games** from Lichess in PGN format.
-2. **Analyze moves and identify blunders** using engine evaluations or Lichess annotations.
-3. **Create heatmap visualizations** highlighting the squares on the chessboard where you make the most mistakes.
-
-The goal is to help chess players understand their weak points on the board and improve more efficiently.
+- **Download your games** from Lichess via the API (PGN format).  
+- **Analyze blunders automatically** using Stockfish (local engine).  
+- Generate a **heatmap visualization** showing which squares have the highest blunder frequency.  
+- Simple, clean GUI output with adjustable figure size and a bottom-positioned colorbar.  
+- Lightweight setup — just put `stockfish.exe` in `C:\Tools` or update the path accordingly.
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
-- Python 3.7+
-- [Lichess account](https://lichess.org)
-- Basic Python knowledge
+- Python 3.7+  
+- [Stockfish](https://stockfishchess.org/download/) engine executable  
+- Required Python packages (install via pip): pip install chess matplotlib requests
 
-### Installation
 
-1. Clone the repo:
-    ```bash
-    git clone https://github.com/yourusername/lichess-blunder-heatmap.git
-    cd lichess-blunder-heatmap
-    ```
+### Set Up
+1. Download your games:
+ - Run download-chess-games.py to fetch your Lichess games.
 
-2. (Optional) Create and activate a virtual environment:
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows: venv\Scripts\activate
-    ```
+2. Analyze blunders:
+ - Run analyze_blunders.py to process your downloaded games with Stockfish and generate blunder data.
 
-3. Install dependencies:
-    ```bash
-    pip install -r requirements.txt
-    ```
+3. Visualize heatmap:
+ - Run draw_heatmap.py to display the blunder frequency heatmap.
 
----
+#### Stockfish Set UP
+- Update the STOCKFISH_PATH in analyze_blunders.py to match where it is on your computer
 
-## ⚙️ Usage
+## Trouble Shooting
+- Ensure Stockfish path is correct and executable has proper permissions.
 
-### Step 1: Download games
+- Use raw string literals for Windows paths (r"C:\Tools\stockfish.exe").
 
-Edit `download_lichess_games.py` and set your Lichess username. Then run:
+- If visualization is too large or small, adjust figsize in draw_heatmap.py.
 
-```bash
-python download_lichess_games.py
+## Future Improvements
+- Filter blunders by piece type or game phase.
+
+- Export heatmap images.
