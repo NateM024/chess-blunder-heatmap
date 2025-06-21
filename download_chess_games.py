@@ -10,6 +10,5 @@ def download_lichess_games(username, max_games=20, output_file="games.pgn"):
             f.write(game + "\n\n")
     print(f"Saved games to {output_file}")
 
-# Example usage
 if __name__ == "__main__":
     download_lichess_games("NateChess24", max_games=10)
